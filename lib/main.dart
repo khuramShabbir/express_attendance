@@ -3,6 +3,7 @@ import 'package:express_attendance/Provider/AttendanceProvider/attendance_provid
 import 'package:express_attendance/Provider/UserCredentialsProvider/user_credentials.dart';
 import 'package:express_attendance/Provider/time_provider.dart';
 import 'package:express_attendance/Splash_scr.dart';
+import 'package:express_attendance/View/Camera%20View/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -18,13 +19,15 @@ class MyHttpOverrides extends HttpOverrides {
 
 Future<void> main() async {
   HttpOverrides.global = new MyHttpOverrides();
-  WidgetsFlutterBinding.ensureInitialized();
+  await WidgetsFlutterBinding.ensureInitialized();
+
   await GetStorage.init();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider.value(value: UserCredentialsProvider()),
       ChangeNotifierProvider.value(value: AttendanceProvider()),
       ChangeNotifierProvider.value(value: TimeProvider()),
+      ChangeNotifierProvider.value(value: CameraProvider()),
     ],
     child: GetMaterialApp(
       debugShowCheckedModeBanner: false,

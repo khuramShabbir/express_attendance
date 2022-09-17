@@ -9,16 +9,15 @@ class ApiServices {
     http.Request request = await http.Request('GET', Uri.parse(ApiUrls.BASE_URL + feedUrl));
 
     http.StreamedResponse response = await request.send();
+    String res = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
-      String res = await response.stream.bytesToString();
-
       return res;
     } else {
+      logger.e(res);
       AppConst.errorSnackBar("Something Went Wrong, try again later");
+      return "";
     }
-
-    return "";
   }
 
   static Future<String> postRawMethodApi(Map<String, String> body, String feedurl) async {

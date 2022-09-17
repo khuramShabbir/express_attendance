@@ -11,20 +11,32 @@ class UserCredentialsProvider extends ChangeNotifier {
   UserCredentialsModel? userCredentialsModel;
 
   Future<bool> verifiedUser() async {
+    AppConst.startProgress();
     String response = await ApiServices.getMethodApi(
-      "${ApiUrls.VERIFY_USER}?user=${emailController.text}&password=${passwordController.text}",
+      "${ApiUrls.VERIFY_USER}?user=${emailController.text.trim()}&password=${passwordController.text.trim()}",
     );
 
-    if (response.isEmpty) return false;
+    if (response.isEmpty) {
+      AppConst.stopProgress();
+
+      return false;
+    }
+    ;
 
     userCredentialsModel = userCredentialsModelFromJson(response);
-    AppConst.infoSnackBar(userCredentialsModel!.responseMessage);
-    if (userCredentialsModel!.data != null) {
-      await StorageCRUD.saveUser(response);
 
-      logger.i(StorageCRUD.getUser().data!.employeeName);
+    if (userCredentialsModel!.data == null) {
+      await AppConst.infoSnackBar(userCredentialsModel!.responseMessage);
+      AppConst.stopProgress();
+
+      return false;
+    } else if (userCredentialsModel!.data != null) {
+      await StorageCRUD.saveUser(response);
+      AppConst.stopProgress();
+
+      return true;
     }
-    return true;
+    return false;
   }
 
   bool logOut() {

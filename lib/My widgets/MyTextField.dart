@@ -13,18 +13,21 @@ class MyTextField extends StatefulWidget {
   final TextInputType textInputType;
   final String? Function(String?)? onValidate;
   final int mxLine;
+  final FocusNode? focusNode;
 
   const MyTextField(
       {Key? key,
-        this.obscuretxt = false,
-        required this.hintTxt,
-        this.IconLeft,
-        this.IconRight,
-        required this.textEditingController,
-        this.enabled = true,
-        this.textInputType = TextInputType.text,
-        this.onValidate,
-        required this.mxLine, required this.heigtContainer})
+      this.obscuretxt = false,
+      this.focusNode,
+      required this.hintTxt,
+      this.IconLeft,
+      this.IconRight,
+      required this.textEditingController,
+      this.enabled = true,
+      this.textInputType = TextInputType.text,
+      this.onValidate,
+      required this.mxLine,
+      required this.heigtContainer})
       : super(key: key);
 
   @override
@@ -38,9 +41,11 @@ class _MyTextFieldState extends State<MyTextField> {
     return Container(
       height: widget.heigtContainer,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20,),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+        ),
         child: TextFormField(
-
+          focusNode: widget.focusNode,
           maxLines: widget.mxLine,
           controller: widget.textEditingController,
           enabled: widget.enabled,
@@ -52,11 +57,11 @@ class _MyTextFieldState extends State<MyTextField> {
             // focusColor: Colors.transparent,
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  width: 1.5,
-                  color: HexColor("#D9D9D9").withOpacity(0.8),
-                )),
+              width: 1.5,
+              color: HexColor("#D9D9D9").withOpacity(0.8),
+            )),
             focusedBorder: OutlineInputBorder(
-              borderSide:  BorderSide(color: HexColor("#D9D9D9").withOpacity(0.8), width: 1.5),
+              borderSide: BorderSide(color: HexColor("#D9D9D9").withOpacity(0.8), width: 1.5),
               // borderRadius: BorderRadius.circular(10.0),
             ),
 

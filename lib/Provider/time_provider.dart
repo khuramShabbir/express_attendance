@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class TimeProvider with ChangeNotifier {
   int hours = 00;
@@ -27,5 +28,16 @@ class TimeProvider with ChangeNotifier {
 
   void pauseTime() {
     if (timer != null && timer!.isActive) timer!.cancel();
+  }
+
+  String nowTime = "";
+
+  void getCurrentTime() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      DateTime dateTime = DateTime.now();
+      DateFormat format = DateFormat('hh:mm a');
+      nowTime = format.format(dateTime);
+      notifyListeners();
+    });
   }
 }

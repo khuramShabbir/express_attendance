@@ -1,5 +1,4 @@
 import 'package:express_attendance/Provider/time_provider.dart';
-import 'package:express_attendance/UtilsAndConst/const.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +16,7 @@ class _TimerUpState extends State<TimerUp> {
 
   @override
   void initState() {
-    DateTime dateTime = DateTime.parse("2022-09-12T13:08:18.9570");
+    DateTime dateTime = DateTime.parse(widget.dateTime.toString());
     DateTime dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime.toString(), true);
 
     timeProvider = Provider.of<TimeProvider>(context, listen: false);
@@ -41,6 +40,7 @@ class _TimerUpState extends State<TimerUp> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
+              Text("Duration: ", style: timerStyle),
               Text(twoDigits(timerProv.hours).replaceAll("-", ""), style: timerStyle),
               separate(),
               Text(twoDigits(timerProv.mints).replaceAll("-", ""), style: timerStyle),
@@ -54,41 +54,8 @@ class _TimerUpState extends State<TimerUp> {
   }
 
   String twoDigits(int n) {
-    if (n >= -10) return "0$n";
+    if (n >= -9) return "0$n";
     return "$n";
-
-    // switch (unitType) {
-    //   case "minutes":
-    //     if (widget.format == CountDownTimerFormat.daysHoursMinutes ||
-    //         widget.format == CountDownTimerFormat.hoursMinutes ||
-    //         widget.format == CountDownTimerFormat.minutesOnly) {
-    //       if (difference > Duration.zero) {
-    //         n++;
-    //       }
-    //     }
-    //     if (n >= 10) return "$n";
-    //     return "0$n";
-    //   case "hours":
-    //     if (widget.format == CountDownTimerFormat.daysHours ||
-    //         widget.format == CountDownTimerFormat.hoursOnly) {
-    //       if (difference > Duration.zero) {
-    //         n++;
-    //       }
-    //     }
-    //     if (n >= 10) return "$n";
-    //     return "0$n";
-    //   case "days":
-    //     if (widget.format == CountDownTimerFormat.daysOnly) {
-    //       if (difference > Duration.zero) {
-    //         n++;
-    //       }
-    //     }
-    //     if (n >= 10) return "$n";
-    //     return "0$n";
-    //   default:
-    //     if (n >= 10) return "$n";
-    //     return "0$n";
-    // }
   }
 
   Widget separate() {

@@ -8,21 +8,21 @@ String attendanceStatusModelToJson(AttendanceStatusModel data) => json.encode(da
 class AttendanceStatusModel {
   AttendanceStatusModel({
     required this.responseMessage,
-    required this.data,
+    this.data,
     required this.isValid,
     required this.error,
     required this.errorDetail,
   });
 
   String responseMessage;
-  Data data;
+  Data? data;
   bool isValid;
   bool error;
   dynamic errorDetail;
 
   factory AttendanceStatusModel.fromJson(Map<String, dynamic> json) => AttendanceStatusModel(
         responseMessage: json["ResponseMessage"],
-        data: Data.fromJson(json["Data"]),
+        data: json["Data"] != null ? Data.fromJson(json["Data"]) : null,
         isValid: json["IsValid"],
         error: json["Error"],
         errorDetail: json["ErrorDetail"],
@@ -30,7 +30,7 @@ class AttendanceStatusModel {
 
   Map<String, dynamic> toJson() => {
         "ResponseMessage": responseMessage,
-        "Data": data.toJson(),
+        "Data": data?.toJson(),
         "IsValid": isValid,
         "Error": error,
         "ErrorDetail": errorDetail,

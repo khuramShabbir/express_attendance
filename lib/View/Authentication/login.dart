@@ -1,5 +1,6 @@
 import 'package:express_attendance/My%20widgets/MyCupertinoButton.dart';
 import 'package:express_attendance/My%20widgets/MyTextField.dart';
+import 'package:express_attendance/Provider/AttendanceProvider/attendance_provider.dart';
 import 'package:express_attendance/Provider/UserCredentialsProvider/user_credentials.dart';
 import 'package:express_attendance/Services/ApiServices/StorageServices/get_storage.dart';
 import 'package:express_attendance/View/Employee%20Attendance/employee_attendance_main_screen.dart';
@@ -19,6 +20,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late UserCredentialsProvider userProv;
+  final FocusNode focusNode = FocusNode();
 
   bool showVisibilty = true;
   bool rememberMe = false;
@@ -29,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     final s = MediaQuery.of(context).size;
 
@@ -62,9 +65,10 @@ class _LoginPageState extends State<LoginPage> {
                     heigtContainer: 50,
                     IconRight: Icon(Icons.email_outlined),
                     onValidate: (v) {
-                      if (v!.isEmpty)
+                      if (userProv.emailController.text.replaceAll(" ", "").isEmpty)
                         return "Required";
-                      else if (!v.isEmail) return "Please Enter Valid Email";
+                      else if (!userProv.emailController.text.replaceAll(" ", "").isEmail)
+                        return "Please Enter Valid Email";
 
                       return null;
                     }),
@@ -88,8 +92,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     obscuretxt: showVisibilty,
                     onValidate: (v) {
-                      if (v!.isEmpty) return "Required";
-
+                      if (userProv.passwordController.text.replaceAll(" ", "").isEmpty)
+                        return "Required";
                       return null;
                     }),
                 SizedBox(
@@ -116,10 +120,22 @@ class _LoginPageState extends State<LoginPage> {
                 MyCupertinoButton(
                     text: "Login",
                     onPressed: () async {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      userProv.emailController.text =
+                          userProv.emailController.text.replaceAll(" ", "");
+                      userProv.passwordController.text =
+                          userProv.passwordController.text.replaceAll(" ", "");
+                      // setState(() {});
+
                       if (_formKey.currentState!.validate()) {
                         bool result = await userProv.verifiedUser();
-                        await StorageCRUD.box.write(StorageKeys.remember, rememberMe);
                         if (!result) return;
+
+                        bool status = await Provider.of<AttendanceProvider>(context, listen: false)
+                            .getStatus(showProgress: true);
+                        if (!status) return;
+                        await StorageCRUD.box.write(StorageKeys.remember, rememberMe);
+
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

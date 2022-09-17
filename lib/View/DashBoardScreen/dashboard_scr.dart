@@ -22,8 +22,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _listClass = [AttendanceReport()];
-
     final s = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
@@ -46,7 +44,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: Image.asset("assets/person_icon.png"),
                           ),
                           title: Text(
-                            "Hi , ",
+                            "Hi , ${StorageCRUD.getUser().data?.employeeName}",
                             style: TextStyle(
                                 fontWeight: FontWeight.w300, color: Colors.white, fontSize: 16),
                           ),

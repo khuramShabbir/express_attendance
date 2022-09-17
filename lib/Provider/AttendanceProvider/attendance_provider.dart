@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:camera/camera.dart';
 import 'package:express_attendance/Models/attendace_status.dart';
+import 'package:express_attendance/Models/get_address_model.dart';
 import 'package:express_attendance/Services/ApiServices/StorageServices/get_storage.dart';
 import 'package:express_attendance/Services/ApiServices/api_services.dart';
 import 'package:express_attendance/Services/ApiServices/api_urls.dart';
@@ -6,22 +10,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:xml2json/xml2json.dart';
 import '../../UtilsAndConst/const.dart';
 
 class AttendanceProvider extends ChangeNotifier {
   ImagePicker imagePicker = ImagePicker();
+  final myTransformer = Xml2Json();
   Position? position;
   bool? serviceEnabled;
   LocationPermission? permission;
   List<Placemark>? places;
-  String address = "";
+  List<Placemark>? officePlace;
+  String address = "Getting location";
 
+  String officeAddress = "Getting location";
   bool isStatusLoaded = false;
   AttendanceStatusModel? attendanceStatusModel;
-
   XFile? xFile;
 
   Future<bool> getStatus({bool showProgress = false}) async {
+    await getPosition();
     if (showProgress) AppConst.startProgress();
     String response = await ApiServices.getMethodApi(
         "${ApiUrls.GET_STATUS}?EmployeeID=${StorageCRUD.getUser().data!.employeeId}");
@@ -29,22 +37,47 @@ class AttendanceProvider extends ChangeNotifier {
     if (response.isEmpty) return false;
     attendanceStatusModel = attendanceStatusModelFromJson(response);
     isStatusLoaded = true;
-    logger.i(attendanceStatusModel!.data.checkInOutType);
     notifyListeners();
     return true;
   }
 
-  Future<bool> getAddress({required double lat, required double lng}) async {
-    AppConst.startProgress();
+  Future<bool> getOfficeAddressFromServer({required double lat, required double lng}) async {
     String response =
-        await ApiServices.getMethodApi("${ApiUrls.GET_ADDRESS}?latitude=$lat&longitude$lng");
-    AppConst.stopProgress();
+        await ApiServices.getMethodApi("${ApiUrls.GET_ADDRESS}?latitude=$lat&longitude=$lng");
     if (response.isEmpty) return false;
 
-    /// TODO:
-    // attendanceStatusModel = attendanceStatusModelFromJson(response);
-    isStatusLoaded = true;
-    logger.i(attendanceStatusModel!.data.checkInOutType);
+    myTransformer.parse(response);
+    String json = myTransformer.toBadgerfish();
+    GetAddressModel documentsModel = getAddressModelFromJson(json);
+    officeAddress = documentsModel.geocodeResponse.result
+        .firstWhere((element) {
+          return element.formattedAddress.empty.isNotEmpty;
+        })
+        .formattedAddress
+        .empty;
+
+    /// TODO: get address
+    notifyListeners();
+    return true;
+  }
+
+  Future<bool> getCurrentAddressFromServer({required double lat, required double lng}) async {
+    String response =
+        await ApiServices.getMethodApi("${ApiUrls.GET_ADDRESS}?latitude=$lat&longitude=$lng");
+    if (response.isEmpty) return false;
+
+    myTransformer.parse(response);
+    String json = myTransformer.toBadgerfish();
+    GetAddressModel documentsModel = getAddressModelFromJson(json);
+    address = documentsModel.geocodeResponse.result
+        .firstWhere((element) {
+          return element.formattedAddress.empty.isNotEmpty;
+        })
+        .formattedAddress
+        .empty;
+    logger.i(officeAddress);
+
+    /// TODO: get address
     notifyListeners();
     return true;
   }
@@ -75,6 +108,7 @@ class AttendanceProvider extends ChangeNotifier {
 
   Future<void> checkOut() async {
     await getPosition();
+
     if (position == null) {
       AppConst.errorSnackBar("Unable to get Position");
 
@@ -99,14 +133,17 @@ class AttendanceProvider extends ChangeNotifier {
     if (status) AppConst.successSnackBar("Checked Out Successfully ");
   }
 
-  Future<bool> getImage() async {
-    xFile = await imagePicker.pickImage(
-      source: ImageSource.camera,
-      preferredCameraDevice: CameraDevice.front,
-    );
-    if (xFile == null) return false;
-    return true;
-  }
+  // Future<bool> getImage() async {
+  //   final cameras = await availableCameras();
+  //   final firstCamera = cameras.last;
+  //
+  //   // xFile = await imagePicker.pickImage(
+  //   //   source: ImageSource.camera,
+  //   //   preferredCameraDevice: CameraDevice.front,
+  //   // );
+  //   // if (xFile == null) return false;
+  //   return true;
+  // }
 
   Future<bool> getPosition() async {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -131,16 +168,17 @@ class AttendanceProvider extends ChangeNotifier {
 
       return false;
     }
+    AppConst.startProgress();
+
     position = await Geolocator.getCurrentPosition();
     places = await placemarkFromCoordinates(position!.latitude, position!.longitude);
-    address = "${places!.first.thoroughfare},${places!.first.locality}";
-    logger.e(address);
+    AppConst.stopProgress();
 
     notifyListeners();
     return true;
   }
 
-  Future<double> checkArea() async {
+  double checkArea() {
     double dis = Geolocator.distanceBetween(
       StorageCRUD.getUser().data!.officeLatitude,
       StorageCRUD.getUser().data!.officeLongitude,
