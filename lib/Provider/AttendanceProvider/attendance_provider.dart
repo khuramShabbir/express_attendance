@@ -42,7 +42,10 @@ class AttendanceProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> getOfficeAddressFromServer({required double lat, required double lng}) async {
+  Future<bool> getOfficeAddressFromServer({
+    required double lat,
+    required double lng,
+  }) async {
     String response =
         await ApiServices.getMethodApi("${ApiUrls.GET_ADDRESS}?latitude=$lat&longitude=$lng");
     if (response.isEmpty) return false;
@@ -62,7 +65,10 @@ class AttendanceProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> getCurrentAddressFromServer({required double lat, required double lng}) async {
+  Future<bool> getCurrentAddressFromServer({
+    required double lat,
+    required double lng,
+  }) async {
     String response =
         await ApiServices.getMethodApi("${ApiUrls.GET_ADDRESS}?latitude=$lat&longitude=$lng");
     if (response.isEmpty) return false;
@@ -85,7 +91,7 @@ class AttendanceProvider extends ChangeNotifier {
 
   Future<bool> uploadImage() async {
     AppConst.startProgress();
-    FTPConnect ftpConnect = FTPConnect('104.219.233.99', user: 'appftpuser', pass: 'zwM056y5@');
+    FTPConnect ftpConnect = FTPConnect('132.148.73.1', user: 'appftpuser', pass: 'H\$3ipa210');
     try {
       File fileToUpload = File(xFile!.path);
       await ftpConnect.connect();
@@ -94,7 +100,7 @@ class AttendanceProvider extends ChangeNotifier {
 
       await ftpConnect.disconnect();
 
-      fileUrl = "https://consussol.com/appftp/" + xFile!.path.split('/').last;
+      fileUrl = ApiUrls.BASE + "appftp/" + xFile!.path.split('/').last;
       // int size = await xFile!.length();
       logger.e(fileUrl);
       AppConst.stopProgress();

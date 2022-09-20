@@ -21,7 +21,6 @@ class UserCredentialsProvider extends ChangeNotifier {
 
       return false;
     }
-    ;
 
     userCredentialsModel = userCredentialsModelFromJson(response);
 
