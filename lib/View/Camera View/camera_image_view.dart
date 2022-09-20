@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:express_attendance/Provider/AttendanceProvider/attendance_provider.dart';
-import 'package:express_attendance/UtilsAndConst/const.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -24,13 +23,6 @@ class CameraImageView extends StatelessWidget {
               Get.back(result: atProv.xFile);
             },
           ),
-          // appBar: AppBar(
-          //   centerTitle: true,
-          //   title: Text(
-          //     "Image View",
-          //     style: TextStyle(color: Colors.black),
-          //   ),
-          // ),
           body: Column(
             children: [
               // SizedBox(height: 50),

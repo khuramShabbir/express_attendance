@@ -1,6 +1,5 @@
-import 'dart:convert';
+import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:express_attendance/Models/attendace_status.dart';
 import 'package:express_attendance/Models/get_address_model.dart';
 import 'package:express_attendance/Services/ApiServices/StorageServices/get_storage.dart';
@@ -12,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:xml2json/xml2json.dart';
 import '../../UtilsAndConst/const.dart';
+import 'package:ftpconnect/ftpConnect.dart';
 
 class AttendanceProvider extends ChangeNotifier {
   ImagePicker imagePicker = ImagePicker();
@@ -22,6 +22,7 @@ class AttendanceProvider extends ChangeNotifier {
   List<Placemark>? places;
   List<Placemark>? officePlace;
   String address = "Getting location";
+  String fileUrl = "Getting location";
 
   String officeAddress = "Getting location";
   bool isStatusLoaded = false;
@@ -82,18 +83,55 @@ class AttendanceProvider extends ChangeNotifier {
     return true;
   }
 
+  Future<bool> uploadImage() async {
+    AppConst.startProgress();
+    FTPConnect ftpConnect = FTPConnect('104.219.233.99', user: 'appftpuser', pass: 'zwM056y5@');
+    try {
+      File fileToUpload = File(xFile!.path);
+      await ftpConnect.connect();
+      bool file = await ftpConnect.uploadFile(fileToUpload);
+      logger.i("upload file url  " + file.toString());
+
+      await ftpConnect.disconnect();
+
+      fileUrl = "https://consussol.com/appftp/" + xFile!.path.split('/').last;
+      // int size = await xFile!.length();
+      logger.e(fileUrl);
+      AppConst.stopProgress();
+      return true;
+    } catch (e) {
+      logger.i("error of ftp" + e.toString());
+      AppConst.stopProgress();
+    }
+    AppConst.stopProgress();
+
+    return false;
+  }
+
   Future<void> checkIn() async {
     await getPosition();
     if (position == null) {
+      AppConst.stopProgress();
+
       AppConst.errorSnackBar("Unable to get Position");
 
       return;
     }
+
+    bool res = await uploadImage();
+    if (!res) {
+      AppConst.stopProgress();
+
+      AppConst.errorSnackBar("Unable to Upload Image");
+
+      return;
+    }
+
     AppConst.startProgress();
     Map<String, String> fields = {
       "EmployeeID": "${StorageCRUD.getUser().data!.employeeId}",
       "CheckInOutType": "1",
-      "ImageURL": "https://consussol.com/appftp/sample.png",
+      "ImageURL": fileUrl,
       "Latitude": "23.3",
       "Longitude": "125.36"
     };
@@ -114,12 +152,18 @@ class AttendanceProvider extends ChangeNotifier {
 
       return;
     }
+    bool res = await uploadImage();
+    if (!res) {
+      AppConst.stopProgress();
 
+      AppConst.errorSnackBar("Unable to Upload Image");
+      return;
+    }
     AppConst.startProgress();
     Map<String, String> fields = {
       "EmployeeID": "${StorageCRUD.getUser().data!.employeeId}",
       "CheckInOutType": "2",
-      "ImageURL": "https://consussol.com/appftp/sample.png",
+      "ImageURL": fileUrl,
       "Latitude": position!.latitude.toString(),
       "Longitude": position!.longitude.toString()
     };
@@ -132,18 +176,6 @@ class AttendanceProvider extends ChangeNotifier {
     bool status = await getStatus(showProgress: true);
     if (status) AppConst.successSnackBar("Checked Out Successfully ");
   }
-
-  // Future<bool> getImage() async {
-  //   final cameras = await availableCameras();
-  //   final firstCamera = cameras.last;
-  //
-  //   // xFile = await imagePicker.pickImage(
-  //   //   source: ImageSource.camera,
-  //   //   preferredCameraDevice: CameraDevice.front,
-  //   // );
-  //   // if (xFile == null) return false;
-  //   return true;
-  // }
 
   Future<bool> getPosition() async {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();

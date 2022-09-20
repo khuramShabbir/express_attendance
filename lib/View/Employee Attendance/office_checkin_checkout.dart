@@ -114,8 +114,6 @@ class _OfficeState extends State<Office> {
                         return;
                       }
                       double dis = await atProv.checkArea();
-                      atProv.xFile = await Get.to(() => CameraApp());
-                      if (atProv.xFile == null) return;
                       if (dis > 200) {
                         await Get.defaultDialog(
                           title: "Can't Check-in",
@@ -149,7 +147,12 @@ class _OfficeState extends State<Office> {
 
                         return;
                       }
-                      if (dis < 200) await atProv.checkIn();
+                      if (dis < 200) {
+                        atProv.xFile = await Get.to(() => CameraApp());
+                        if (atProv.xFile == null) return;
+
+                        await atProv.checkIn();
+                      }
                     },
                     child: CircleAvatar(
                       maxRadius: 100,
