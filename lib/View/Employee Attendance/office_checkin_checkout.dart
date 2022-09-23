@@ -124,7 +124,7 @@ class _OfficeState extends State<Office> {
                                 "Your Distance from office"
                                 " ${dis.round()} meter, "
                                 "Please Check-in"
-                                "+ from Out Side",
+                                " from Out Side",
                                 style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 20),

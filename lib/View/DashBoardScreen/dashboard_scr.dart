@@ -101,7 +101,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         crossAxisSpacing: 0,
                         mainAxisSpacing: 13,
                       ),
-                      itemCount: 2,
+                      itemCount: 1,
                       itemBuilder: (BuildContext context, int index) {
                         return Padding(
                           padding: index == 0

@@ -15,10 +15,9 @@ class UserCredentialsProvider extends ChangeNotifier {
     String response = await ApiServices.getMethodApi(
       "${ApiUrls.VERIFY_USER}?user=${emailController.text.trim()}&password=${passwordController.text.trim()}",
     );
+    AppConst.stopProgress();
 
     if (response.isEmpty) {
-      AppConst.stopProgress();
-
       return false;
     }
 

@@ -10,7 +10,6 @@ class ApiServices {
 
     http.StreamedResponse response = await request.send();
     String res = await response.stream.bytesToString();
-
     if (response.statusCode == 200) {
       return res;
     } else {

@@ -34,7 +34,8 @@ class AttendanceProvider extends ChangeNotifier {
     if (showProgress) AppConst.startProgress();
     String response = await ApiServices.getMethodApi(
         "${ApiUrls.GET_STATUS}?EmployeeID=${StorageCRUD.getUser().data!.employeeId}");
-    if (showProgress) AppConst.stopProgress();
+    logger.i(response);
+    AppConst.stopProgress();
     if (response.isEmpty) return false;
     attendanceStatusModel = attendanceStatusModelFromJson(response);
     isStatusLoaded = true;
