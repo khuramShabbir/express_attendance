@@ -63,6 +63,7 @@ class _CameraAppState extends State<CameraApp> {
               );
       },
     ));
+
   }
 }
 
@@ -74,11 +75,24 @@ class CameraProvider extends ChangeNotifier {
   void getAvailableCameras() async {
     cameras = await availableCameras();
     if (cameras != null) initCam();
+    print("cameras ${cameras!.length}");
+
   }
 
   void initCam() async {
+    CameraDescription? camera;
+
+    cameras!.forEach((element) {
+      if(element.lensDirection==CameraLensDirection.front){
+        camera=element;
+      }
+    });
+    // CameraLensDirection
+
     controller = await CameraController(
-        Platform.isIOS ? cameras!.first : cameras!.last, ResolutionPreset.medium);
+      camera!
+       /* Platform.isIOS ? cameras!.first : cameras!.last*/, ResolutionPreset.medium,
+    );
     await controller!.initialize().then((value) {
       isInitCam = true;
       return null;

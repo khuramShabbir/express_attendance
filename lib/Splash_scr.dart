@@ -17,9 +17,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    // AttendanceProvider attendanceProvider = Provider.of<AttendanceProvider>(context, listen: false);
-    // attendanceProvider.getPosition();
-    // if (attendanceProvider.position != null)
     loadData();
     super.initState();
   }
