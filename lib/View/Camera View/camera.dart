@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:express_attendance/Provider/AttendanceProvider/attendance_provider.dart';
 import 'package:express_attendance/View/Camera%20View/camera_image_view.dart';
@@ -75,7 +77,8 @@ class CameraProvider extends ChangeNotifier {
   }
 
   void initCam() async {
-    controller = await CameraController(cameras!.last, ResolutionPreset.medium);
+    controller = await CameraController(
+        Platform.isIOS ? cameras!.first : cameras!.last, ResolutionPreset.medium);
     await controller!.initialize().then((value) {
       isInitCam = true;
       return null;
