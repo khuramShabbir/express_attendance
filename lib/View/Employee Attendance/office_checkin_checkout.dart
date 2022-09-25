@@ -94,14 +94,14 @@ class _OfficeState extends State<Office> {
                       if (atProv.xFile != null) await atProv.checkOut();
                     },
                     child: CircleAvatar(
-                      maxRadius: 100,
+                      maxRadius: Get.width * .15,
                       backgroundColor: Colors.red,
                       child: Text(
                         "Check-out",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           color: Colors.white,
-                          fontSize: 23,
+                          fontSize: Get.width * .05,
                         ),
                       ),
                     ),
@@ -155,12 +155,15 @@ class _OfficeState extends State<Office> {
                       }
                     },
                     child: CircleAvatar(
-                      maxRadius: 100,
+                      maxRadius: Get.width * .15,
                       backgroundColor: Colors.teal.shade400,
                       child: Text(
                         "Check-in",
                         style: TextStyle(
-                            fontWeight: FontWeight.w500, color: Colors.white, fontSize: 23),
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          fontSize: Get.width * .05,
+                        ),
                       ),
                     ),
                   )

@@ -9,6 +9,7 @@ import 'package:express_attendance/View/DashBoardScreen/dashboard_scr.dart';
 import 'package:express_attendance/View/Employee%20Attendance/office_checkin_checkout.dart';
 import 'package:express_attendance/View/Employee%20Attendance/outside_check_in_check_out.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class EmployeeMainScreen extends StatefulWidget {
@@ -70,6 +71,7 @@ class _EmployeeMainScreenState extends State<EmployeeMainScreen> {
         return result;
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
         body: Consumer<AttendanceProvider>(
           builder: (BuildContext context, value, Widget? child) {
@@ -180,7 +182,7 @@ class _EmployeeMainScreenState extends State<EmployeeMainScreen> {
                                   margin: EdgeInsets.only(top: 120),
                                   width: s.width,
                                   decoration: BoxDecoration(
-                                    color: Colors.blueGrey[50],
+                                    color: Colors.white,
                                     borderRadius: BorderRadius.horizontal(
                                         left: Radius.circular(20),
                                         right: const Radius.circular(20)),
@@ -199,7 +201,7 @@ class _EmployeeMainScreenState extends State<EmployeeMainScreen> {
                                                   style: TextStyle(
                                                       fontWeight: FontWeight.w500,
                                                       color: Colors.indigo,
-                                                      fontSize: 15),
+                                                      fontSize: 12),
                                                 )),
                                           ),
                                         ],
@@ -216,7 +218,7 @@ class _EmployeeMainScreenState extends State<EmployeeMainScreen> {
                                                   style: TextStyle(
                                                       fontWeight: FontWeight.w500,
                                                       color: Colors.indigo,
-                                                      fontSize: 15),
+                                                      fontSize: 12),
                                                 )),
                                           ),
                                         ],
@@ -252,9 +254,10 @@ class _EmployeeMainScreenState extends State<EmployeeMainScreen> {
                                       Text(
                                         "Choose your Attendance Mode ",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.indigo,
-                                            fontSize: 20),
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.indigo,
+                                          fontSize: 15,
+                                        ),
                                       ),
                                       SizedBox(height: 30),
                                       atProv.attendanceStatusModel!.data == null ||
@@ -264,7 +267,7 @@ class _EmployeeMainScreenState extends State<EmployeeMainScreen> {
                                               controller: controller,
                                               initialValue: _selectedValue,
                                               padding: 40,
-                                              height: 45,
+                                              height: Get.height * .05,
                                               innerPadding: EdgeInsets.symmetric(horizontal: 0),
                                               children: {
                                                 1: Constant.segmented(
@@ -280,14 +283,14 @@ class _EmployeeMainScreenState extends State<EmployeeMainScreen> {
                                               },
                                               decoration: BoxDecoration(
                                                 color: Colors.indigoAccent,
-                                                borderRadius: BorderRadius.circular(40),
+                                                borderRadius: BorderRadius.circular(50),
                                                 border: Border.all(
                                                     color: Colors.indigoAccent, width: 5),
                                                 // border: Border.all(color: Colors.black, width: 5),
                                               ),
                                               thumbDecoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius: BorderRadius.circular(40),
+                                                borderRadius: BorderRadius.circular(50),
                                               ),
                                               onValueChanged: (v) async {
                                                 setState(
@@ -301,7 +304,7 @@ class _EmployeeMainScreenState extends State<EmployeeMainScreen> {
                                       SizedBox(height: 20),
                                       buildSegmented(_selectedValue),
 
-                                      SizedBox(height: 200),
+                                      SizedBox(height: 20),
                                     ],
                                   ),
                                 ),
