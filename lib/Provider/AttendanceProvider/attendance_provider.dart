@@ -101,8 +101,7 @@ class AttendanceProvider extends ChangeNotifier {
 
       await ftpConnect.disconnect();
 
-      fileUrl = ApiUrls.BASE + "appftp/" + xFile!.path.split('/').last;
-      // int size = await xFile!.length();
+      fileUrl = xFile!.path.split('/').last;
       logger.e(fileUrl);
       AppConst.stopProgress();
       return true;
@@ -139,8 +138,8 @@ class AttendanceProvider extends ChangeNotifier {
       "EmployeeID": "${StorageCRUD.getUser().data!.employeeId}",
       "CheckInOutType": "1",
       "ImageURL": fileUrl,
-      "Latitude": "23.3",
-      "Longitude": "125.36"
+      "Latitude": position!.latitude.toString(),
+      "Longitude": position!.longitude.toString()
     };
     String response = await ApiServices.postRawMethodApi(fields, ApiUrls.ATTENDANCE);
     AppConst.stopProgress();
